@@ -21,7 +21,7 @@ LDFLAGS=-ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD}"
 
 default: build
 
-all: clean install build_all
+all: clean dependencies build_all install
 
 build:
 	go build ${LDFLAGS} -o ./build/${BINARY}
@@ -32,6 +32,9 @@ build_all:
 
 install:
 	go install ${LDFLAGS}
+
+dependencies:
+	go get
 
 # Remove only what we've created
 clean:
