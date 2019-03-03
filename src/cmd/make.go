@@ -19,7 +19,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/uconn-ling/openHouseMap/src/walk"
+	"../walk"
 )
 
 // makeCmd represents the make command
