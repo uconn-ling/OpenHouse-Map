@@ -14,9 +14,7 @@
 
 package main
 
-import "./src/cmd"
-// import "./src/walk"
-// import "fmt"
+import "github.com/uconn-ling/openHouseMap/src/cmd"
 
 // Variables to identify the build
 var (

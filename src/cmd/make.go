@@ -19,7 +19,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"../walk"
+	"github.com/uconn-ling/openHouseMap/src/walk"
 )
 
 // makeCmd represents the make command
@@ -55,7 +55,8 @@ func mainBuild(cmd *cobra.Command, args []string) {
 	countries := walk.GetData("./data", "country_")
 	for endonym, c := range countries {
 			fmt.Println(endonym)
-			fmt.Println(c.GetPeople())
+			fmt.Println(c)
+			// fmt.Println(c.GetPeople())
 	}
 
 }
