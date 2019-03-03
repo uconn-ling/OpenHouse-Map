@@ -14,7 +14,9 @@
 
 package main
 
-import "openHouseMap/cmd"
+import "./src/cmd"
+// import "./src/walk"
+// import "fmt"
 
 // Variables to identify the build
 var (
@@ -24,4 +26,7 @@ var (
 
 func main() {
 	cmd.Execute()
+	// countries := walk.GetCountries("./data", "country_")
+	// fmt.Println(countries)
+	// fmt.Println("blubb")
 }

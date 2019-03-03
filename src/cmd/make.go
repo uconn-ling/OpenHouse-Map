@@ -18,13 +18,15 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+
+	"../walk"
 )
 
 // makeCmd represents the make command
 var makeCmd = &cobra.Command{
 	Use:   "make",
 	Short: "run \"make\" to build pdf",
-	Long:  `put pictures in full size in a folder named "inputPictures"`,
+	Long:  `put pictures and IPA into \"data\" folder as illustrated in \"test/data\"`,
 	Run:   mainBuild,
 }
 
@@ -48,5 +50,12 @@ func init() {
 }
 
 func mainBuild(cmd *cobra.Command, args []string) {
-	fmt.Println("hello world")
+	fmt.Println("hello world!")
+
+	countries := walk.GetData("./data", "country_")
+	for endonym, c := range countries {
+			fmt.Println(endonym)
+			fmt.Println(c.GetPeople())
+	}
+
 }

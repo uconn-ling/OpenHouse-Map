@@ -29,7 +29,7 @@ var cfgFile string
 var rootCmd = &cobra.Command{
 	Use:   "openHouseMap",
 	Short: "openHouse country/person generator",
-	Long:  `A generator that makes a printable pdf with the country/person listing for the world map`,
+	Long:  "A generator that makes a printable pdf with the country/person listing for the world map",
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	//	Run: func(cmd *cobra.Command, args []string) { },
