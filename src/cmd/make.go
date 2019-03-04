@@ -19,7 +19,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"../walk"
+	// "../walk"
+	"../print"
 )
 
 // makeCmd represents the make command
@@ -52,11 +53,13 @@ func init() {
 func mainBuild(cmd *cobra.Command, args []string) {
 	fmt.Println("hello world!")
 
-	countries := walk.GetData("./data", "country_")
-	for endonym, c := range countries {
-			fmt.Println(endonym)
-			fmt.Println(c)
+	// countries := walk.GetData("./data", "country_")
+	// for endonym, c := range countries {
+			// fmt.Println(endonym)
+			// fmt.Println(c)
 			// fmt.Println(c.GetPeople())
-	}
+	// }
 
+	// print.CreatePdf()
+	print.Quicklatex(`"ro:man`, "./tmp/roman-ipa.png")
 }
