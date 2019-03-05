@@ -1,20 +1,24 @@
 language: go
+sudo: false
 go:
-- 1.11.5
+- 1.x
 
-script: make all
+before_install:
+  # gox simplifies building for multiple architectures
+  - go get github.com/mitchellh/gox
+
+script:
+  - go get -t -v ./...
+  - gox -os="linux darwin windows" -arch="amd64" -output="./build/openHouseMap.." -ldflags "-X main.Rev=`git rev-parse --short HEAD`" -verbose ./...; fi
 
 deploy:
   provider: releases
   api_key:
     secure: ai7TDykvpKa8ntGs2mV6u7+S2OIF3g0/ummW/WqvOToPOK07kiBxLx+4Ibo8EzE+BMSbC1GBOh56nwbgD+aBKXmOk5GW1i/QPK5rLDjMPNYI8OJB+DMYhT9gKrv6Ip3xgrQHogVKx5aYcN+IsgUzS0/WhQg96FsBotvUOBep3p4Sxvz35ZPqtyP7WVDpm/UyidwuaGsSfIfQlwRX98zRjUMqllpSVqY7Rx5UtVBYiPdCdIRwqAPdb8Ady0CLnRXALEUITANqIBjZMdJi6cobCiUZupywUrYwM1hT0Of19jpkXr8hM1FTVNrfF46ngA3HeYECzkzDnqPmWe0Zm/n9AkZipb+Mj/GsJ8Kd5SlSHiZIwEnO23CznheN5Pd+S0eOa3RFnVvkKSgl5Aqfa4Fg8GYf+fFpyDFylmaKDc8ixXn4nP0FJeESW0hC/QoB404eIyAstFGJV3V8iPyQlHm9k/DCLaVsobVuxPIayJLSJq9CkQowiPbX17Nzh6qnyGkOaUInduB6VNfRhrGs6kB3LfHwVsS1GQRoDp+tpJDBoJprZg6mw5vU2f4q43jWn2ecWNVK/uRNqnJE5OGHlfzPRN+z0O2YoGQPg8/7IkLy2sLE4XF1HbGpbXIGCoD1G2SaskQn0ZihiT8MknRgk3/UpwC3HdCOT+Wb28RXEB2Rdyg=
   file:
-    - 'build/openHouseMap-darwin-386'
-    - 'build/openHouseMap-darwin-amd64'
-    - 'build/openHouseMap-linux-386'
-    - 'build/openHouseMap-linux-amd64'
-    - 'build/openHouseMap-windows-386'
-    - 'build/openHouseMap-windows-amd64'
+    - 'build/openHouseMap.linux.amd64'
+    - 'build/openHouseMap.darwin.amd64'
+    - 'build/openHouseMap.windows.amd64.exe'
   skip_cleanup: true
   on:
     tags: true

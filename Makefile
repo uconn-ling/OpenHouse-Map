@@ -21,7 +21,7 @@ LDFLAGS=-ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD}"
 
 default: build
 
-all: clean dependencies build_all install
+all: clean build_all install
 
 build:
 	go build ${LDFLAGS} -o ./build/${BINARY}
