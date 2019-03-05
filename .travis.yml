@@ -10,7 +10,7 @@ before_install:
 
 script:
   - go get
-  - gox -os="linux darwin windows" -arch="amd64" -output="./build/openHouseMap.." -ldflags "-X main.Rev=`git rev-parse --short HEAD`" -verbose ./...
+  - gox -os="linux darwin windows" -arch="amd64" -output="./build/openHouseMap.{{.OS}}.{{.Arch}}" -ldflags "-X main.Rev=`git rev-parse --short HEAD`" -verbose ./...
 
 deploy:
   provider: releases
