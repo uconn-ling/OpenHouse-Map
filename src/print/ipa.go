@@ -1,87 +1,118 @@
 package print
 
 import (
-  "bytes"
-  // "encoding/json"
-  "fmt"
-  "gopkg.in/resty.v1"
-  "io"
-  "log"
-  "math/rand"
-  // "net/http"
-  // "net/url"
-  "os"
-  "regexp"
+	"bytes"
+	"net/http"
+	"path"
+	// "encoding/json"
+	"fmt"
+	"io"
+	"log"
+	"math/rand"
+
+	"gopkg.in/resty.v1"
+	// "net/http"
+	// "net/url"
+
+	"os"
+	"regexp"
+
+	"../utils"
 )
 
 type AuthSuccess struct {
 	/* variables */
 }
 
-func Quicklatex (ipa string, localPath string) {
+func Quicklatex(ipa string, localFolder string, cp string) {
 
-  /* send the request to Quicklatex */
-  sendData := map[string]interface{}{
-    "fcolor": "000000",
-    "fsize": "99px",
-    "formula": `$\textipa{` + ipa + `}$`,
-    "mode": "0",
-    "out": "1",
-    "preamble": `\usepackage{tipa}`,
-    "remhost": "github.com/uconn-ling/openHouseMap",
-    "rnd": fmt.Sprintf("%f", rand.Float32()*100),
-  }
-  var sendDataString string = func (m map[string]interface{}) string {
-    b := new(bytes.Buffer)
-    for key, value := range m {
-        fmt.Fprintf(b, `%s=%s&`, key, value)
-    }
-    str := b.String()
-    return str[:len(str)-1]
-  }(sendData)
-  // log.Printf(sendDataString)
+	/* generate hash */
+	// fmt.Println("## " + ipa + " ##")
+	hash := utils.HashString(ipa)
+	// fmt.Println(hash)
 
-  response, err := resty.R().
-    SetBody(sendDataString).
-    SetResult(&AuthSuccess{}).
-    Post("https://www.quicklatex.com/latex3.f")
-  if err != nil {
-    log.Fatalln(err)
-  }
-  // log.Println(response.String())
+	newPath := path.Join(localFolder, hash+".png")
+	// fmt.Println(newPath)
+	fcolor := "000000"
+	if cp == "c" {
+		fcolor = "FFFFFF"
+	}
+	/* check if file is present */
+	if _, err := os.Stat(newPath); err == nil {
+		// file exists
+		return
+	} else if os.IsNotExist(err) {
+		// file does *not* exist
+		/* send the request to Quicklatex */
+		sendData := map[string]interface{}{
+			"fcolor":   fcolor,
+			"fsize":    "99px",
+			"formula":  `$\textipa{` + ipa + `}$`,
+			"mode":     "0",
+			"out":      "1",
+			"preamble": `\usepackage{tipa}`,
+			"remhost":  "github.com/uconn-ling/openHouseMap",
+			"rnd":      fmt.Sprintf("%f", rand.Float32()*100),
+		}
+		var sendDataString string = func(m map[string]interface{}) string {
+			b := new(bytes.Buffer)
+			for key, value := range m {
+				fmt.Fprintf(b, `%s=%s&`, key, value)
+			}
+			str := b.String()
+			return str[:len(str)-1]
+		}(sendData)
+		// log.Printf(sendDataString)
 
-  /* read out the url in the response */
-  var url string
-  regResp, _ := regexp.Compile(`\s([^ ]+)\s\d+ \d+ \d`)
-  matches := regResp.FindStringSubmatch(response.String())
-  if matches == nil {
-    log.Fatal("Failed to get URL from Quicklatex")
-  }
-  url = matches[1]
-  log.Println(url)
+		response, err := resty.R().
+			SetBody(sendDataString).
+			SetResult(&AuthSuccess{}).
+			Post("https://www.quicklatex.com/latex3.f")
+		if err != nil {
+			log.Fatalln(err)
+		}
+		// log.Println("###" + response.String() + "----")
 
-  /* download the file that the url points to */
+		/* read out the url in the response */
+		var url string
+		regResp, _ := regexp.Compile(`\s+([^ ]+)\s\d+ \d+ \d`)
+		matches := regResp.FindStringSubmatch(response.String())
+		if matches == nil {
+			log.Fatal("Failed to get URL from Quicklatex")
+		}
+		url = matches[1]
+		// log.Println("###" + url)
 
-  // Get the data
-  response, err = resty.R().
-    SetDoNotParseResponse(false).
-    Get("https://quicklatex.com/cache3/9f/ql_d4da944d8baadd1ebf871eba46812e9f_l3.png")
-    // Get(url)
-  if err != nil {
-    log.Fatal(err) // (when using the variable url) "first path segment in URL cannot contain colon"
-  }
+		/* download the file that the url points to */
 
-  // Create the file
-  out, err := os.Create(localPath)
-  if err != nil {
-    log.Fatal(err)
-  }
+		if err := DownloadFile(newPath, url); err != nil {
+			panic(err)
+		}
+	} else {
+		// Schrodinger: file may or may not exist. See err for details.
 
-  // Write the body to the file
-  _, err = io.Copy(out, response.RawBody()) // write from 2nd arg to 1st arg
-  if err != nil {
-    log.Fatal(err) // "http: read on closed response body"
-  }
-  response.RawBody().Close()
-  out.Close()
+		// Therefore, do *NOT* use !os.IsNotExist(err) to test for file existence
+
+	}
+}
+
+func DownloadFile(filepath string, url string) error {
+
+	// Get the data
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Create the file
+	out, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	// Write the body to file
+	_, err = io.Copy(out, resp.Body)
+	return err
 }

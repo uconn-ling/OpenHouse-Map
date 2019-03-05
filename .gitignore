@@ -14,5 +14,5 @@
 build/*
 tmp/*
 pdf/*
-
-data/*
+output/*
+inputData/*
