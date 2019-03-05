@@ -17,7 +17,7 @@ import (
 	"os"
 	"regexp"
 
-	"../utils"
+	"github.com/uconn-ling/openHouseMap/src/utils"
 )
 
 type AuthSuccess struct {

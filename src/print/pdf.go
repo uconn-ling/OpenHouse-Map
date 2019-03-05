@@ -5,9 +5,9 @@ import (
 	"math"
 	"path"
 	// "github.com/fogleman/gg"
-	"../walk"
 	"github.com/fogleman/gg"
 	"github.com/jung-kurt/gofpdf"
+	"github.com/uconn-ling/openHouseMap/src/walk"
 )
 
 var fileName string = "./output/pdf/openHouseMap.pdf"

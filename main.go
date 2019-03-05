@@ -14,7 +14,7 @@
 
 package main
 
-import "./src/cmd"
+import "github.com/uconn-ling/openHouseMap/src/cmd"
 
 // Variables to identify the build
 var (

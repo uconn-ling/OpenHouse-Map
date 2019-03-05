@@ -20,8 +20,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"../print"
-	"../walk"
+	"github.com/uconn-ling/openHouseMap/src/print"
+	"github.com/uconn-ling/openHouseMap/src/walk"
 )
 
 // makeCmd represents the make command
