@@ -21,7 +21,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/uconn-ling/openHouseMap/src/print"
-	"github.com/uconn-ling/openHouseMap/src/walk"
+	"github.com/uconn-ling/openHouseMap/src/data"
 )
 
 // makeCmd represents the make command
@@ -56,19 +56,21 @@ func mainBuild(cmd *cobra.Command, args []string) {
 	baseDataDir := "./inputData"
 	baseCountryName := "country_"
 	convertedPNGsDir := path.Join(baseDataDir, "pngs")
-	countries := walk.GetData(baseDataDir, baseCountryName)
+	countries := data.GetData(baseDataDir, baseCountryName)
 
 	for endonym, c := range countries {
 		// fmt.Println("### " + endonym)
 		// fmt.Println(c)
 		// fmt.Println(len(c.People))
-		fmt.Println("Checking rendered png to tipa LATEX string # " + c.TipaString + " # from country " + endonym)
-		print.Quicklatex(c.TipaString, convertedPNGsDir, "c")
+		fmt.Println("Checking rendered png to tipa LATEX string # " + c.Endonym.Value + " # from country " + endonym)
+		c.Endonym = print.Quicklatex(c.Endonym, convertedPNGsDir, true)
 
-		for personName, personMap := range c.People {
-			fmt.Println("Checking rendered png to tipa LATEX string # " + personMap.TipaString + " # from person " + personName)
-			print.Quicklatex(personMap.TipaString, convertedPNGsDir, "p")
+		for personName, p := range c.People {
+			fmt.Println("Checking rendered png to tipa LATEX string # " + p.Name.Value + " # from person " + personName)
+			p.Name = print.Quicklatex(p.Name, convertedPNGsDir, false)
+			c.People[personName] = p
 		}
+		countries[endonym] = c
 	}
 
 	print.CreatePdf(countries)
